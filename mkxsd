@@ -1,0 +1,20 @@
+#!/bin/bash
+
+set -ex
+
+base_dir="$(pwd)"
+
+if [ ! -e trang.jar ]; then
+    wget 'https://github.com/relaxng/jing-trang/releases/download/V20181222/trang-20181222.zip'
+    unzip trang-20181222.zip
+    rm trang-20181222.zip
+    dir=$(echo trang-*)
+    mv "${dir}/trang.jar" ./
+    rm -rf "$dir"
+fi
+
+cd rnc
+for fn in *.rnc; do
+    n=${fn%.*}
+    java -jar "${base_dir}/trang.jar" -I rnc -O xsd "$fn" "../src/main/xsd/${n}.xsd"
+done
